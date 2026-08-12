@@ -4,7 +4,7 @@
 
 ## 起動方法
 
-Node.js 22.13 以上が必要です。
+Node.js 22.13 以上が必要です。このリポジトリには `.node-version` があるため、`fnm` を有効にした環境ではフォルダへ移動すると自動的に22.13.0へ切り替わります。
 
 ```bash
 npm install
@@ -13,13 +13,57 @@ npm run dev
 
 起動後、ブラウザで `http://localhost:3000` を開いてください。
 
+## Node.jsのバージョン切り替え
+
+```powershell
+# インストール済みのバージョンを確認
+fnm list
+
+# Node.js 22.13.0へ切り替え
+fnm use 22.13.0
+
+# 別のバージョンを追加して切り替え
+fnm install 20
+fnm use 20
+
+# 既定を22.13.0へ戻す
+fnm default 22.13.0
+```
+
+新しいPowerShellを開くと`fnm`が自動的に有効になります。
+
 ## 主な機能
 
 - ピアノ／シンセサイザー／オルガンの3音色
+- アコースティックピアノのサンプル再生、強弱による音量・音色変化
+- スペースキーまたは画面上のペダルによるサステインと弦共鳴
 - PCキーボード・マウス・タッチでの演奏
 - キー割り当ての編集とブラウザ内保存
+- 移行トークンによる別ブラウザへのキー設定コピー
+- コード進行の入力・編集・自動ボイスリーディング再生
+- 7th、dim、aug、sus、add9、スラッシュコードへの対応
 - 音量・オクターブ調整
 - 演奏の録音、再生、音声ファイル保存
 - 音源ファイルから単音メロディを検出する簡易採譜（ベータ）
 
 録音形式はブラウザが対応する WebM 音声です。簡易採譜は先頭30秒を解析し、単音メロディ向けに設計されています。
+
+## コード進行
+
+「Chord Progression」パネルへ、コードをスペース・改行・`→`で区切って入力します。括弧内は拍数で、省略時は4拍です。
+
+```text
+Dm(4) Faug/C#(4) F/C(4) G7/B(4)
+```
+
+解析後はカード上でコード名と拍数を変更でき、前後移動や削除にも対応します。BPMは40〜240、ループ再生にも対応しています。スラッシュ以降の音は独立した最低音として扱われます。
+
+フラットとシャープは、ASCII表記と音楽記号表記の両方を利用できます。例えばハーフディミニッシュは`Fm7b5(1)`と`Fm7♭5(1)`のどちらでも入力できます。`G#sus4`と`G♯sus4`も同じコードとして解析されます。
+
+## ピアノ音源のクレジット
+
+ピアノ音色にはAlexander Holm氏による「Salamander Grand Piano」のサンプルを使用しています。音源は[Creative Commons Attribution 3.0 Unported](https://creativecommons.org/licenses/by/3.0/)で提供されています。ブラウザ向けに圧縮・音程変換・音量および音色処理を加えています。
+
+- 原著作者: Alexander Holm
+- 配布元: [sfzinstruments/SalamanderGrandPiano](https://github.com/sfzinstruments/SalamanderGrandPiano)
+- 原音源: [Salamander Grand Piano V3](https://archive.org/details/SalamanderGrandPianoV3)
