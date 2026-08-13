@@ -62,6 +62,8 @@ Dm(4) Faug/C#(4) F/C(4) G7/B(4)
 
 `N.C.(2)`は2拍分の無音、`B7#9(2)`はB7シャープ9thを2拍として再生します。
 
+minor 9thは`Cm9`、`Fm9(2)`、`Bbm9(4)`の形式で入力します。構成音はルート、短3度、完全5度、短7度、長9度です。
+
 ## ピアノ音源のクレジット
 
 ピアノ音色にはAlexander Holm氏による「Salamander Grand Piano」のサンプルを使用しています。音源は[Creative Commons Attribution 3.0 Unported](https://creativecommons.org/licenses/by/3.0/)で提供されています。ブラウザ向けに圧縮・音程変換・音量および音色処理を加えています。

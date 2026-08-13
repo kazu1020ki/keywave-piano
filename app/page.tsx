@@ -448,7 +448,7 @@ export default function Home() {
           <textarea value={progressionText} onChange={(event) => setProgressionText(event.target.value)} aria-label="コード進行" placeholder="Gm(2) D(1) Eb(1) Abm(4)" />
           <button onClick={applyProgressionText}>コード進行を解析</button>
         </div>
-        <p className="chord-examples"><b>入力例</b>　N.C.(2)　•　B7#9(2)　•　Fm7b5(1) / Fm7♭5(1)　•　Faug/C#(4)　•　G7/B(4)　<span>N.C.は指定拍数だけ無音になります</span></p>
+        <p className="chord-examples"><b>入力例</b>　Cm9(4)　•　Fm9(2)　•　N.C.(2)　•　B7#9(2)　•　Fm7b5(1) / Fm7♭5(1)　•　Faug/C#(4)　<span>minor 9thはCm9の形式で入力します</span></p>
         <div className="transport-bar">
           <div className="transport-buttons">
             <button className="transport-primary" onClick={() => transport === "playing" ? pauseProgression() : playProgression(false)} disabled={!playableProgression.length}>{transport === "playing" ? "Ⅱ  PAUSE" : "▶  PLAY"}</button>

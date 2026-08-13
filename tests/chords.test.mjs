@@ -59,3 +59,17 @@ test("N.C.を休符、7#9をテンションコードとして解析する", () =
   assert.equal(sharpNine.chord.beats, 2);
   assert.deepEqual(sharpNine.chord.pitchClasses, [11,3,6,9,2]);
 });
+
+test("minor 9thを解析する", () => {
+  const cases = {
+    "Cm9": [0,3,7,10,2],
+    "Fm9(2)": [5,8,0,3,7],
+    "Bbm9(4)": [10,1,5,8,0],
+  };
+  for (const [symbol, notes] of Object.entries(cases)) {
+    const parsed = parseChordSymbol(symbol);
+    assert.equal(parsed.ok, true, symbol);
+    assert.deepEqual(parsed.chord.pitchClasses, notes, symbol);
+  }
+  assert.equal(parseChordSymbol("Fm9(2)").chord.beats, 2);
+});
