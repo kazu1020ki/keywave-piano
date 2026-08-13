@@ -1,6 +1,6 @@
 export type ChordEvent = {
   symbol: string; root: string; rootPc: number; quality: string; bass?: string;
-  bassPc?: number; beats: number; pitchClasses: number[];
+  bassPc?: number; beats: number; pitchClasses: number[]; isRest?: boolean;
 };
 export type ParseResult = { ok: true; chord: ChordEvent } | { ok: false; input: string; error: string };
 export type Voicing = { bass: number; voices: number[]; all: number[] };

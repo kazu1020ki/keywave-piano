@@ -60,6 +60,8 @@ Dm(4) Faug/C#(4) F/C(4) G7/B(4)
 
 フラットとシャープは、ASCII表記と音楽記号表記の両方を利用できます。例えばハーフディミニッシュは`Fm7b5(1)`と`Fm7♭5(1)`のどちらでも入力できます。`G#sus4`と`G♯sus4`も同じコードとして解析されます。
 
+`N.C.(2)`は2拍分の無音、`B7#9(2)`はB7シャープ9thを2拍として再生します。
+
 ## ピアノ音源のクレジット
 
 ピアノ音色にはAlexander Holm氏による「Salamander Grand Piano」のサンプルを使用しています。音源は[Creative Commons Attribution 3.0 Unported](https://creativecommons.org/licenses/by/3.0/)で提供されています。ブラウザ向けに圧縮・音程変換・音量および音色処理を加えています。

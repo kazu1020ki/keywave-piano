@@ -46,3 +46,16 @@ test("不正なコードだけをエラーにする", () => {
   assert.deepEqual(parsed.map((item) => item.ok), [true,false,true]);
   assert.match(parsed[1].error, /Cxyz/);
 });
+
+test("N.C.を休符、7#9をテンションコードとして解析する", () => {
+  const rest = parseChordSymbol("N.C.(2)");
+  assert.equal(rest.ok, true);
+  assert.equal(rest.chord.isRest, true);
+  assert.equal(rest.chord.beats, 2);
+  assert.deepEqual(rest.chord.pitchClasses, []);
+
+  const sharpNine = parseChordSymbol("B7#9(2)");
+  assert.equal(sharpNine.ok, true);
+  assert.equal(sharpNine.chord.beats, 2);
+  assert.deepEqual(sharpNine.chord.pitchClasses, [11,3,6,9,2]);
+});

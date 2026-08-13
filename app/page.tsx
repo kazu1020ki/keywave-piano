@@ -263,14 +263,19 @@ export default function Home() {
     const playable = progressionRef.current.filter((item) => item.chord);
     const item = playable[index];
     if (!item?.chord) { setTransport("stopped"); setCurrentChordIndex(0); return; }
-    const voicing = voiceChord(item.chord, previousVoicingRef.current);
-    previousVoicingRef.current = voicing;
-    chordNotesRef.current = voicing.all;
     setCurrentChordIndex(index);
-    setChordActive(new Set(voicing.voices.map((midi) => midi % 12)));
-    setChordBass(voicing.bass % 12);
-    playNote(voicing.bass, 0.76, false, "piano");
-    voicing.voices.forEach((midi, voiceIndex) => chordAttackTimersRef.current.push(window.setTimeout(() => playNote(midi, 0.58 + voiceIndex * 0.025, false, "piano"), voiceIndex * 9)));
+    if (item.chord.isRest) {
+      chordNotesRef.current = [];
+      setChordActive(new Set()); setChordBass(null);
+    } else {
+      const voicing = voiceChord(item.chord, previousVoicingRef.current);
+      previousVoicingRef.current = voicing;
+      chordNotesRef.current = voicing.all;
+      setChordActive(new Set(voicing.voices.map((midi) => midi % 12)));
+      setChordBass(voicing.bass % 12);
+      playNote(voicing.bass, 0.76, false, "piano");
+      voicing.voices.forEach((midi, voiceIndex) => chordAttackTimersRef.current.push(window.setTimeout(() => playNote(midi, 0.58 + voiceIndex * 0.025, false, "piano"), voiceIndex * 9)));
+    }
     const durationMs = item.chord.beats * 60000 / bpmRef.current;
     chordTimerRef.current = window.setTimeout(() => {
       const nextIndex = index + 1;
@@ -443,7 +448,7 @@ export default function Home() {
           <textarea value={progressionText} onChange={(event) => setProgressionText(event.target.value)} aria-label="コード進行" placeholder="Gm(2) D(1) Eb(1) Abm(4)" />
           <button onClick={applyProgressionText}>コード進行を解析</button>
         </div>
-        <p className="chord-examples"><b>入力例</b>　Fm7b5(1) / Fm7♭5(1)　•　G#sus4(2) / G♯sus4(2)　•　Faug/C#(4)　•　G7/B(4)　<span>♭・♯とb・#はどちらも使えます</span></p>
+        <p className="chord-examples"><b>入力例</b>　N.C.(2)　•　B7#9(2)　•　Fm7b5(1) / Fm7♭5(1)　•　Faug/C#(4)　•　G7/B(4)　<span>N.C.は指定拍数だけ無音になります</span></p>
         <div className="transport-bar">
           <div className="transport-buttons">
             <button className="transport-primary" onClick={() => transport === "playing" ? pauseProgression() : playProgression(false)} disabled={!playableProgression.length}>{transport === "playing" ? "Ⅱ  PAUSE" : "▶  PLAY"}</button>
@@ -459,7 +464,7 @@ export default function Home() {
             <div className="card-number">{String(index + 1).padStart(2, "0")}{item.id === currentPlayableId && <span>PLAYING</span>}</div>
             <label><span>CHORD</span><input value={item.symbol} onChange={(event) => { stopProgression(); updateProgressionItem(item.id, { symbol: event.target.value }); }} aria-label={`${index + 1}番目のコード名`}/></label>
             <label className="beats-field"><span>BEATS</span><input type="number" min="0.25" step="0.25" value={item.beats} onChange={(event) => { stopProgression(); updateProgressionItem(item.id, { beats: Math.max(.25, Number(event.target.value) || .25) }); }} aria-label={`${item.symbol}の拍数`}/></label>
-            {item.chord && <p className="chord-notes">{item.chord.root}{item.chord.quality || " major"}{item.chord.bass ? ` / bass ${item.chord.bass}` : ""}</p>}
+            {item.chord && <p className="chord-notes">{item.chord.isRest ? "No Chord / 休符" : `${item.chord.root}${item.chord.quality || " major"}${item.chord.bass ? ` / bass ${item.chord.bass}` : ""}`}</p>}
             {item.error && <p className="chord-error">{item.error}</p>}
             <div className="card-actions"><button onClick={() => { stopProgression(); moveProgressionItem(index, -1); }} disabled={index === 0} aria-label={`${item.symbol}を前へ`}>←</button><button onClick={() => { stopProgression(); moveProgressionItem(index, 1); }} disabled={index === progression.length - 1} aria-label={`${item.symbol}を後ろへ`}>→</button><button className="delete-chord" onClick={() => { stopProgression(); setProgression((items) => items.filter((candidate) => candidate.id !== item.id)); }} aria-label={`${item.symbol}を削除`}>削除</button></div>
           </article>)}
