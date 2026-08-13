@@ -294,6 +294,15 @@ export default function Home() {
     setPedal(false); setTransport("playing"); playChordAtRef.current(fromStart ? 0 : currentChordIndex);
   };
 
+  const playProgressionFrom = (itemId: string) => {
+    const playable = progressionRef.current.filter((item) => item.chord);
+    const startIndex = playable.findIndex((item) => item.id === itemId);
+    if (startIndex < 0) return;
+    previousVoicingRef.current = null;
+    setPedal(false); setTransport("playing"); setCurrentChordIndex(startIndex);
+    playChordAtRef.current(startIndex);
+  };
+
   const pauseProgression = () => { stopChordSound(); setTransport("paused"); };
   const stopProgression = () => { stopChordSound(); previousVoicingRef.current = null; setTransport("stopped"); setCurrentChordIndex(0); };
 
@@ -460,17 +469,17 @@ export default function Home() {
           <div className="progression-summary"><b>{progressionBeats}</b><span>BEATS / {playableProgression.length} CHORDS</span></div>
         </div>
         <div className="chord-cards" aria-live="polite">
-          {progression.map((item, index) => <article key={item.id} className={`chord-card ${item.id === currentPlayableId ? "is-playing" : ""} ${item.error ? "has-error" : ""}`}>
+          {progression.map((item, index) => <article key={item.id} className={`chord-card ${item.chord ? "is-playable" : ""} ${item.id === currentPlayableId ? "is-playing" : ""} ${item.error ? "has-error" : ""}`} onClick={(event) => { if (item.chord && !(event.target as HTMLElement).closest("input, button, label")) playProgressionFrom(item.id); }} title={item.chord ? `${item.symbol}から再生` : undefined}>
             <div className="card-number">{String(index + 1).padStart(2, "0")}{item.id === currentPlayableId && <span>PLAYING</span>}</div>
             <label><span>CHORD</span><input value={item.symbol} onChange={(event) => { stopProgression(); updateProgressionItem(item.id, { symbol: event.target.value }); }} aria-label={`${index + 1}番目のコード名`}/></label>
             <label className="beats-field"><span>BEATS</span><input type="number" min="0.25" step="0.25" value={item.beats} onChange={(event) => { stopProgression(); updateProgressionItem(item.id, { beats: Math.max(.25, Number(event.target.value) || .25) }); }} aria-label={`${item.symbol}の拍数`}/></label>
             {item.chord && <p className="chord-notes">{item.chord.isRest ? "No Chord / 休符" : `${item.chord.root}${item.chord.quality || " major"}${item.chord.bass ? ` / bass ${item.chord.bass}` : ""}`}</p>}
             {item.error && <p className="chord-error">{item.error}</p>}
-            <div className="card-actions"><button onClick={() => { stopProgression(); moveProgressionItem(index, -1); }} disabled={index === 0} aria-label={`${item.symbol}を前へ`}>←</button><button onClick={() => { stopProgression(); moveProgressionItem(index, 1); }} disabled={index === progression.length - 1} aria-label={`${item.symbol}を後ろへ`}>→</button><button className="delete-chord" onClick={() => { stopProgression(); setProgression((items) => items.filter((candidate) => candidate.id !== item.id)); }} aria-label={`${item.symbol}を削除`}>削除</button></div>
+            <div className="card-actions">{item.chord && <button className="play-from" onClick={() => playProgressionFrom(item.id)} aria-label={`${item.symbol}から再生`}>▶ ここから</button>}<button onClick={() => { stopProgression(); moveProgressionItem(index, -1); }} disabled={index === 0} aria-label={`${item.symbol}を前へ`}>←</button><button onClick={() => { stopProgression(); moveProgressionItem(index, 1); }} disabled={index === progression.length - 1} aria-label={`${item.symbol}を後ろへ`}>→</button><button className="delete-chord" onClick={() => { stopProgression(); setProgression((items) => items.filter((candidate) => candidate.id !== item.id)); }} aria-label={`${item.symbol}を削除`}>削除</button></div>
           </article>)}
           {!progression.length && <p className="empty-progression">コードを入力して「コード進行を解析」を押してください。</p>}
         </div>
-        <div className="keyboard-legend"><span><i className="legend-chord"/>コード構成音</span><span><i className="legend-bass"/>ベース音</span><span>スラッシュコードのベースは低いオクターブで再生されます</span></div>
+        <div className="keyboard-legend"><span><i className="legend-chord"/>コード構成音</span><span><i className="legend-bass"/>ベース音</span><span>コードカードを押すと、その位置から再生します</span></div>
       </section>
 
       {showSettings && <section className="settings-panel">
